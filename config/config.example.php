@@ -10,6 +10,7 @@ return [
         'debug'     => false,   // true hanya saat pengembangan
         'timezone'  => 'Asia/Jakarta',
         'whatsapp'  => '6281234567890', // format internasional tanpa +
+        'min_qty_custom' => 12,         // minimum pcs per produk untuk pesanan custom
     ],
     'db' => [
         'host'    => 'localhost',
@@ -21,6 +22,9 @@ return [
     'upload' => [
         'max_size'   => 2 * 1024 * 1024, // 2 MB
         'image_mime' => ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'],
+        // Dokumen privat (desain, mockup, bukti bayar). Pastikan upload_max_filesize PHP di hosting >= nilai ini.
+        'document_mime'     => ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'application/pdf' => 'pdf'],
+        'document_max_size' => 5 * 1024 * 1024, // 5 MB
     ],
     'smtp' => [
         'host' => 'mail.example.com',

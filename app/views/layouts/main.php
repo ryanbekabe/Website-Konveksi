@@ -13,8 +13,10 @@
         <nav>
             <a class="<?= trim(is_active('/')) === 'active' ? 'active' : '' ?>" href="<?= e(url('/')) ?>">Beranda</a>
             <a class="<?= trim(is_active('/produk')) ?>" href="<?= e(url('/produk')) ?>">Katalog</a>
+            <a href="<?= e(url('/pesan/custom')) ?>">Pesan Custom</a>
             <a href="<?= e(url('/keranjang')) ?>">Keranjang (<?= (int) Cart::count() ?>)</a>
             <?php if (Auth::check()): ?>
+                <a href="<?= e(url('/pesanan')) ?>">Pesanan Saya</a>
                 <?php if (Auth::hasRole(['admin', 'produksi', 'keuangan'])): ?>
                     <a href="<?= e(url('/admin')) ?>">Admin</a>
                 <?php endif; ?>

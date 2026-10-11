@@ -43,5 +43,8 @@
             </label>
             <button class="btn" type="submit">Tambah ke Keranjang</button>
         </form>
+        <?php if ($product['tipe'] === 'custom'): ?>
+            <p><a href="<?= e(url('/pesan/custom?produk=' . rawurlencode($product['slug']))) ?>">Pesan custom dengan desain sendiri &rarr;</a></p>
+        <?php endif; ?>
     </div>
 </div>

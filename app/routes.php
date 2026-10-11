@@ -21,9 +21,32 @@ $router->post('/keranjang/hapus', 'CartController@remove');
 
 // Admin
 $router->get('/admin', 'AdminDashboardController@index', ['admin']);
-$router->get('/admin/produk', 'AdminProductController@index', ['admin']);
-$router->get('/admin/produk/tambah', 'AdminProductController@create', ['admin']);
-$router->post('/admin/produk/tambah', 'AdminProductController@store', ['admin']);
-$router->get('/admin/produk/{id}/ubah', 'AdminProductController@edit', ['admin']);
-$router->post('/admin/produk/{id}/ubah', 'AdminProductController@update', ['admin']);
-$router->post('/admin/produk/{id}/hapus', 'AdminProductController@destroy', ['admin']);
+$router->get('/admin/produk', 'AdminProductController@index', ['role:admin']);
+$router->get('/admin/produk/tambah', 'AdminProductController@create', ['role:admin']);
+$router->post('/admin/produk/tambah', 'AdminProductController@store', ['role:admin']);
+$router->get('/admin/produk/{id}/ubah', 'AdminProductController@edit', ['role:admin']);
+$router->post('/admin/produk/{id}/ubah', 'AdminProductController@update', ['role:admin']);
+$router->post('/admin/produk/{id}/hapus', 'AdminProductController@destroy', ['role:admin']);
+
+// Checkout & pesanan pelanggan
+$router->get('/checkout', 'CheckoutController@form', ['auth']);
+$router->post('/checkout', 'CheckoutController@place', ['auth']);
+$router->get('/pesan/custom', 'CustomOrderController@form', ['auth']);
+$router->post('/pesan/custom', 'CustomOrderController@store', ['auth']);
+$router->get('/pesanan', 'OrderController@index', ['auth']);
+$router->get('/pesanan/{kode}', 'OrderController@show', ['auth']);
+$router->post('/pesanan/{kode}/bayar', 'OrderController@pay', ['auth']);
+$router->post('/pesanan/{kode}/mockup', 'OrderController@mockup', ['auth']);
+$router->post('/pesanan/{kode}/batal', 'OrderController@cancel', ['auth']);
+
+// Berkas privat (hak akses diperiksa di controller)
+$router->get('/berkas/desain/{id}', 'FileController@design', ['auth']);
+$router->get('/berkas/bukti/{id}', 'FileController@proof', ['auth']);
+
+// Admin: pesanan
+$router->get('/admin/pesanan', 'AdminOrderController@index', ['admin']);
+$router->get('/admin/pesanan/{kode}', 'AdminOrderController@show', ['admin']);
+$router->post('/admin/pesanan/{kode}/status', 'AdminOrderController@updateStatus', ['role:admin,produksi']);
+$router->post('/admin/pesanan/{kode}/mockup', 'AdminOrderController@uploadMockup', ['role:admin,produksi']);
+$router->post('/admin/pesanan/{kode}/ongkir', 'AdminOrderController@setShipping', ['role:admin,keuangan']);
+$router->post('/admin/pembayaran/{id}/verifikasi', 'AdminOrderController@verifyPayment', ['role:admin,keuangan']);

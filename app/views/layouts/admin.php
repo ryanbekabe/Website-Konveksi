@@ -12,7 +12,10 @@
         <a class="brand" href="<?= e(url('/admin')) ?>"><?= e(config('app.name')) ?></a>
         <nav>
             <a class="<?= $title === 'Dashboard' ? 'active' : '' ?>" href="<?= e(url('/admin')) ?>">Dashboard</a>
+            <a class="<?= trim(is_active('/admin/pesanan')) ?>" href="<?= e(url('/admin/pesanan')) ?>">Pesanan</a>
+            <?php if (Auth::hasRole(['admin'])): ?>
             <a class="<?= trim(is_active('/admin/produk')) ?>" href="<?= e(url('/admin/produk')) ?>">Produk</a>
+            <?php endif; ?>
             <a href="<?= e(url('/')) ?>">Lihat Situs</a>
         </nav>
         <form method="post" action="<?= e(url('/keluar')) ?>">
