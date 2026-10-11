@@ -149,3 +149,19 @@ a.stat { display: block; text-decoration: none; }
 .notif-list li.unread { border-left: 4px solid var(--primary); background: #eff6ff; font-weight: 600; }
 .filters label.check { display: flex; align-items: center; gap: 6px; font-weight: 400; }
 @media (max-width: 760px) { .cols-2 { grid-template-columns: 1fr; } }
+
+/* Laporan */
+.cols-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+a.report-card { display: block; color: inherit; text-decoration: none; }
+a.report-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+.presets { display: inline-flex; gap: 10px; flex-wrap: wrap; margin-left: 8px; }
+.export-links { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.bar-col { width: 40%; }
+.bar { background: #e5e7eb; border-radius: 4px; height: 14px; overflow: hidden; }
+.bar span { display: block; height: 100%; background: var(--primary); }
+@media print {
+    .sidebar, .no-print, .wa-float, .site-header, .site-footer { display: none !important; }
+    .admin-wrap { display: block; }
+    .admin-main { padding: 0; }
+    body { background: #fff; }
+}

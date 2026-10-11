@@ -93,3 +93,9 @@ $router->post('/admin/supplier/tambah', 'AdminSupplierController@store', ['role:
 $router->get('/admin/supplier/{id}/ubah', 'AdminSupplierController@edit', ['role:admin']);
 $router->post('/admin/supplier/{id}/ubah', 'AdminSupplierController@update', ['role:admin']);
 $router->post('/admin/supplier/{id}/hapus', 'AdminSupplierController@destroy', ['role:admin']);
+
+// Laporan
+$router->get('/admin/laporan', 'AdminReportController@index', ['admin']);
+$router->get('/admin/laporan/penjualan', 'AdminReportController@sales', ['role:admin,keuangan']);
+$router->get('/admin/laporan/produksi', 'AdminReportController@production', ['role:admin,produksi']);
+$router->get('/admin/laporan/stok', 'AdminReportController@stock', ['admin']);
