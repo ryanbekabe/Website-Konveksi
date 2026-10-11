@@ -24,7 +24,7 @@ Cakupan:
 | Batas memori & waktu eksekusi PHP | Pagination, batas ukuran upload, laporan diproses per halaman |
 | Tidak ada Redis | Cache sederhana berbasis file |
 | Satu akun hosting, folder `public_html` | Hanya folder `public/` yang dapat diakses web; sisanya di luar atau diproteksi `.htaccess` |
-| Versi PHP 8.x, MySQL/MariaDB | Kode kompatibel PHP ≥ 8.0, PDO MySQL, `utf8mb4` |
+| Versi PHP 8.x, MySQL/MariaDB | Kode kompatibel PHP ≥ 8.1, PDO MySQL, `utf8mb4` |
 
 ---
 
@@ -275,7 +275,7 @@ Prinsip: mobile-first, navigasi sederhana, tombol WhatsApp melayang, gambar diko
 
 ## 11. Kebutuhan Non-Fungsional
 
-- **Kompatibilitas**: PHP ≥ 8.0, MySQL 5.7+/MariaDB 10.3+, ekstensi `pdo_mysql`, `mbstring`, `gd`, `fileinfo`, `curl`.
+- **Kompatibilitas**: PHP ≥ 8.1, MySQL 5.7+/MariaDB 10.3+, ekstensi `pdo_mysql`, `mbstring`, `fileinfo` (`gd` dan `curl` opsional).
 - **Performa**: pagination, indeks DB, cache berkas untuk data yang jarang berubah, gambar WebP/terkompresi, lazy load.
 - **Ketersediaan**: backup rutin, log error.
 - **Kegunaan**: responsif, bahasa Indonesia.

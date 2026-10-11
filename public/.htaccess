@@ -1,19 +1,62 @@
+# Folder web aplikasi (public/ atau public_html/).
+# Bila situs menampilkan Error 500 di semua halaman, hapus baris "Options" di bawah
+# (hosting tertentu melarang direktif Options di .htaccess).
 Options -Indexes
+DirectoryIndex index.php
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Paksa HTTPS (aktifkan setelah SSL terpasang)
+    # Paksa HTTPS: hapus tanda # pada tiga baris berikut SETELAH SSL aktif.
     # RewriteCond %{HTTPS} off
+    # RewriteCond %{HTTP:X-Forwarded-Proto} !https
     # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+    # Semua permintaan yang bukan berkas/folder nyata diteruskan ke front controller.
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ index.php [QSA,L]
 </IfModule>
 
+# Berkas tersembunyi dan berkas yang tidak boleh diunduh.
+<FilesMatch "(^\.|\.(sql|log|bak|env|sh|md|lock|dist|ini)$)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
 <IfModule mod_headers.c>
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "SAMEORIGIN"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    # Aktifkan setelah HTTPS stabil (peramban akan selalu memakai HTTPS):
+    # Header always set Strict-Transport-Security "max-age=31536000"
+</IfModule>
+
+# Kompresi dan cache aset statis (URL aset memakai ?v=waktu-ubah sehingga aman di-cache).
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript image/svg+xml text/plain
+</IfModule>
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType image/svg+xml "access plus 7 days"
+    ExpiresByType image/png "access plus 7 days"
+    ExpiresByType image/jpeg "access plus 7 days"
+    ExpiresByType image/webp "access plus 7 days"
+</IfModule>
+
+# Batas unggah (desain dan bukti bayar hingga 5 MB). Untuk PHP-FPM/CGI gunakan .user.ini.
+<IfModule mod_php.c>
+    php_value upload_max_filesize 8M
+    php_value post_max_size 10M
+</IfModule>
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 8M
+    php_value post_max_size 10M
 </IfModule>

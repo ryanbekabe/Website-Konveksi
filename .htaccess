@@ -1,9 +1,25 @@
 # Dipakai bila seluruh proyek diunggah ke public_html/ (tanpa memindahkan folder public/).
-# Semua permintaan diarahkan ke folder public/.
+# Semua permintaan diarahkan ke folder public/; folder lain dilindungi .htaccess masing-masing.
+# Bila Error 500 di semua halaman, hapus baris "Options" di bawah.
 Options -Indexes
+
+# Berkas di akar proyek yang tidak boleh diunduh (git, composer, dokumentasi, SQL, skrip).
+<FilesMatch "(^\.(?!htaccess$)|\.(sql|log|bak|env|sh|md|lock|dist|ini|json)$)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    # Blokir folder .git dan sejenisnya.
+    RewriteRule (^|/)\.(?!well-known) - [F,L]
+    # Validasi SSL (AutoSSL/Let's Encrypt) membaca /.well-known/ langsung di akar situs.
+    RewriteRule ^\.well-known/ - [L]
     RewriteRule ^$ public/ [L]
     RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L]
