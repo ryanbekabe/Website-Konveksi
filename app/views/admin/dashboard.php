@@ -16,9 +16,9 @@
         <tbody>
         <?php foreach ($orders as $o): ?>
             <tr>
-                <td><?= e($o['kode_order']) ?></td>
+                <td><a href="<?= e(url('/admin/pesanan/' . $o['kode_order'])) ?>"><?= e($o['kode_order']) ?></a></td>
                 <td><?= e($o['nama']) ?></td>
-                <td><?= e(str_replace('_', ' ', $o['status'])) ?></td>
+                <td><?= status_badge($o['status']) ?></td>
                 <td><?= e(rupiah($o['total'])) ?></td>
                 <td><?= e($o['created_at']) ?></td>
             </tr>

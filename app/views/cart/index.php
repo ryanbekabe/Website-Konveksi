@@ -35,5 +35,5 @@
         <tfoot><tr><th colspan="4">Total</th><th colspan="2"><?= e(rupiah($total)) ?></th></tr></tfoot>
     </table>
     </div>
-    <p class="muted">Checkout, pembayaran DP, dan upload desain akan ditambahkan pada tahap berikutnya.</p>
+    <p><a class="btn" href="<?= e(url('/checkout')) ?>">Lanjut ke Checkout</a></p>
 <?php endif; ?>

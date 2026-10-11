@@ -45,9 +45,17 @@ class Cart
         return array_sum(array_column(self::items(), 'qty'));
     }
 
-    /** Item keranjang beserta data produk, harga satuan (bertingkat), dan subtotal. */
+    /**
+     * Item keranjang beserta data produk, harga satuan, dan subtotal.
+     * Harga bertingkat dihitung dari total qty per produk (semua ukuran/warna).
+     */
     public static function detailed(): array
     {
+        $qtyByProduct = [];
+        foreach (self::items() as $item) {
+            $qtyByProduct[$item['product_id']] = ($qtyByProduct[$item['product_id']] ?? 0) + $item['qty'];
+        }
+
         $rows = [];
         foreach (self::items() as $key => $item) {
             $product = Product::find($item['product_id']);
@@ -55,7 +63,7 @@ class Cart
                 self::remove($key);
                 continue;
             }
-            $unit = Product::unitPrice($product, $item['qty']);
+            $unit = Product::unitPrice($product, $qtyByProduct[$item['product_id']]);
             $rows[] = $item + [
                 'key'      => $key,
                 'product'  => $product,
@@ -64,6 +72,11 @@ class Cart
             ];
         }
         return $rows;
+    }
+
+    public static function clear(): void
+    {
+        Session::forget('cart');
     }
 
     public static function total(array $rows): float

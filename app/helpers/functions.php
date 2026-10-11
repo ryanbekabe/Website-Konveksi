@@ -134,3 +134,39 @@ function is_active(string $prefix): string
     $match = $prefix === '/' ? $path === '/' : str_starts_with($path, $prefix);
     return $match ? ' active' : '';
 }
+
+/** Kirim notifikasi dalam aplikasi ke satu pengguna. */
+function notify(int $userId, string $message): void
+{
+    Database::insert('notifications', ['user_id' => $userId, 'pesan' => mb_substr($message, 0, 255)]);
+}
+
+/** Kirim notifikasi ke semua admin aktif. */
+function notify_admins(string $message): void
+{
+    foreach (Database::all("SELECT id FROM users WHERE role = 'admin' AND status = 'aktif'") as $a) {
+        notify((int) $a['id'], $message);
+    }
+}
+
+function log_activity(string $action, string $object = '', string $detail = ''): void
+{
+    Database::insert('activity_logs', [
+        'user_id' => Auth::id(),
+        'aksi'    => $action,
+        'objek'   => $object,
+        'detail'  => $detail,
+        'ip'      => client_ip(),
+    ]);
+}
+
+function status_badge(string $status): string
+{
+    $class = match (true) {
+        $status === 'dibatalkan' => 'badge-danger',
+        $status === 'selesai' => 'badge-ok',
+        in_array($status, ['menunggu_pembayaran', 'menunggu_persetujuan', 'menunggu_pelunasan'], true) => 'badge-warn',
+        default => 'badge-info',
+    };
+    return '<span class="badge ' . $class . '">' . e(Order::label($status)) . '</span>';
+}

@@ -54,6 +54,17 @@ class Router
 
     private function runMiddleware(string $mw): void
     {
+        // Contoh: 'role:admin,keuangan'
+        if (str_starts_with($mw, 'role:')) {
+            if (!Auth::check()) {
+                redirect('/masuk');
+            }
+            if (!Auth::hasRole(explode(',', substr($mw, 5)))) {
+                abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+            }
+            return;
+        }
+
         switch ($mw) {
             case 'auth':
                 if (!Auth::check()) {
