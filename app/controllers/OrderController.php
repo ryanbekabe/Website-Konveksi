@@ -24,6 +24,7 @@ class OrderController extends Controller
             'mockups'  => $mockups,
             'mockup'   => $mockups ? end($mockups) : null,
             'payments' => Order::payments($id),
+            'stages'   => ProductionStage::forOrder($id),
             'shipment' => Order::shipment($id),
             'next'     => Order::nextPayment($order),
             'paid'     => Order::paidTotal($id),

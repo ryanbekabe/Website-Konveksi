@@ -10,7 +10,7 @@ class AdminDashboardController extends Controller
             'pesanan'   => (int) Database::value('SELECT COUNT(*) FROM orders'),
             'omzet'     => (float) Database::value("SELECT COALESCE(SUM(total), 0) FROM orders WHERE status = 'selesai'"),
             'stok_menipis' => (int) Database::value('SELECT COUNT(*) FROM materials WHERE stok <= stok_minimum'),
-        ];
+        ] + ProductionStage::countActive();
 
         $this->view('admin/dashboard', [
             'title'  => 'Dashboard',

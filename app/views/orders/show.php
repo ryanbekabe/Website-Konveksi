@@ -9,6 +9,19 @@
 
 <?php $status = $order['status']; require BASE_DIR . '/app/views/orders/_timeline.php'; ?>
 
+<?php if ($stages): $sum = ProductionStage::summarize($stages); ?>
+<h2>Progres Produksi</h2>
+<div class="progress" title="<?= (int) $sum['percent'] ?>%"><span style="width:<?= (int) $sum['percent'] ?>%"></span></div>
+<ul class="stage-list">
+    <?php foreach ($stages as $st): ?>
+        <li class="<?= e($st['status']) ?>">
+            <?= e(Order::stageLabel($st['tahap'])) ?> - <?= e(ProductionStage::STATUS[$st['status']]) ?>
+            <?= $st['selesai'] ? '<small class="muted">(' . e(date('d M H:i', strtotime($st['selesai']))) . ')</small>' : '' ?>
+        </li>
+    <?php endforeach; ?>
+</ul>
+<?php endif; ?>
+
 <h2>Rincian</h2>
 <div class="table-wrap">
 <table class="table">

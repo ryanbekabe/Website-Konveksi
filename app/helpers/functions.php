@@ -170,3 +170,9 @@ function status_badge(string $status): string
     };
     return '<span class="badge ' . $class . '">' . e(Order::label($status)) . '</span>';
 }
+
+function status_badge_stage(string $status): string
+{
+    $class = ['selesai' => 'badge-ok', 'berjalan' => 'badge-info', 'menunggu' => 'badge-warn'][$status] ?? 'badge-info';
+    return '<span class="badge ' . $class . '">' . e(ProductionStage::STATUS[$status] ?? $status) . '</span>';
+}
