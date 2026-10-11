@@ -15,6 +15,7 @@ Kode awal (fondasi) sudah tersedia. Lihat [Rancangan Program](RANCANGAN_PROGRAM.
 | Invoice dan SPK siap cetak (Cetak / Simpan PDF dari peramban), estimasi selesai | |
 | Pesanan pelanggan: garis waktu status, bayar DP/pelunasan (upload bukti), setujui/revisi mockup, batalkan | Admin untuk kategori, varian, harga grosir, pelanggan, konten |
 | Admin: dashboard, CRUD produk, kelola pesanan (verifikasi bayar, mockup, ongkir, status, resi) | |
+| Laporan penjualan, produksi, dan stok: rentang tanggal, ringkasan, tabel rincian, cetak, ekspor CSV | |
 | Bahan baku & supplier: stok masuk/pemakaian/koreksi (opname), riwayat, peringatan stok menipis, pemakaian per pesanan; halaman Notifikasi | |
 | Pengguna: daftar/cari/filter, tambah staf, ubah peran/status, reset sandi; Akun Saya (profil, ganti sandi) | |
 | Produksi: papan produksi, tugas saya, penugasan petugas, mulai/selesai/reset per tahap, progres untuk pelanggan | |
@@ -66,6 +67,19 @@ Produksi/Admin: dikirim (kurir + resi)   ->  selesai
 
 Hak akses: **admin** semua; **produksi** mockup & status; **keuangan** verifikasi pembayaran & ongkir. Produk hanya dikelola **admin**. Perpindahan status divalidasi di `Order::allowedNext()`. Berkas desain, mockup, dan bukti bayar disimpan di `storage/uploads` dan hanya dapat dibuka pemilik pesanan atau staf lewat `/berkas/...`.
 
+## Laporan
+
+Menu **Laporan** (`/admin/laporan`) berisi tiga laporan dengan filter rentang tanggal (default bulan berjalan, pilihan cepat Bulan ini/Bulan lalu/30 hari/Tahun ini, maksimal 366 hari), tombol **Cetak**, dan ekspor **CSV**.
+
+| Laporan | Akses | Isi |
+|---------|-------|-----|
+| Penjualan | admin, keuangan | Omzet (total pesanan dibuat pada periode, tanpa yang dibatalkan), kas masuk (pembayaran terverifikasi pada periode), piutang, jumlah pcs, rata-rata per pesanan; tren per hari (per bulan bila rentang > 62 hari), produk terlaris, pelanggan teratas, pesanan per status, daftar pesanan |
+| Produksi | admin, produksi | Pesanan selesai produksi (saat Packing selesai), persentase tepat waktu terhadap estimasi, rata-rata lama produksi, rata-rata durasi per tahap dan per petugas, pesanan sedang berjalan dan terlambat |
+| Stok | admin, produksi, keuangan | Posisi stok saat ini dan bahan menipis, stok masuk/keluar pada periode, pemakaian bahan per pesanan |
+
+- **CSV**: UTF-8 dengan BOM. Tersedia pemisah koma dan **titik koma** (pilih titik koma bila Excel berlokal Indonesia menampilkan semua kolom dalam satu kolom). Teks yang berawalan `= + - @` diberi tanda petik agar tidak dijalankan sebagai rumus (mencegah CSV injection). Setiap ekspor dicatat di `activity_logs`.
+- Tanggal laporan memakai zona waktu aplikasi (`app.timezone`); sesi MySQL disamakan dengan zona PHP agar batas hari benar meskipun server hosting memakai zona lain.
+
 ## Stok Bahan Baku dan Supplier
 
 - **Bahan** (`/admin/bahan`): daftar dengan cari, filter supplier, dan **Hanya yang menipis** (stok sama atau di bawah minimum). Dilihat admin, produksi, dan keuangan. Data bahan (tambah/ubah/hapus) dan supplier hanya admin.
@@ -100,9 +114,9 @@ Saat mockup disetujui, enam tahap dibuat otomatis: pemotongan, penjahitan, sablo
 
 ```
 public/           front controller (index.php), assets, uploads (satu-satunya yang diakses web)
-app/core/         Router, Database (PDO), Auth, Session, Csrf, Validator, Upload, Controller
+app/core/         Router, Database (PDO), Auth, Session, Csrf, Validator, Upload, Csv, Controller
 app/controllers/  controller publik; admin/ untuk panel admin
-app/models/       User, Product, Category, Cart, Order, ProductionStage, Material, Supplier, Setting
+app/models/       User, Product, Category, Cart, Order, ProductionStage, Material, Supplier, Report, Setting
 app/views/        layouts/, home/, products/, auth/, cart/, admin/
 app/helpers/      fungsi bantu global (e(), url(), rupiah(), ...)
 app/routes.php    daftar rute

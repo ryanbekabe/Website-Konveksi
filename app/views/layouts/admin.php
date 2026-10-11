@@ -19,6 +19,7 @@
             <?php if (Auth::hasRole(['admin'])): ?>
             <a class="<?= trim(is_active('/admin/produk')) ?>" href="<?= e(url('/admin/produk')) ?>">Produk</a>
             <?php endif; ?>
+            <a class="<?= trim(is_active('/admin/laporan')) ?>" href="<?= e(url('/admin/laporan')) ?>">Laporan</a>
             <a class="<?= trim(is_active('/admin/bahan')) ?>" href="<?= e(url('/admin/bahan')) ?>">Bahan Baku</a>
             <?php if (Auth::hasRole(['admin'])): ?>
             <a class="<?= trim(is_active('/admin/supplier')) ?>" href="<?= e(url('/admin/supplier')) ?>">Supplier</a>
