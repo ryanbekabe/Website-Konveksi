@@ -14,6 +14,7 @@ class AdminDashboardController extends Controller
 
         $this->view('admin/dashboard', [
             'title'  => 'Dashboard',
+            'defaultPassword' => User::usesDefaultPassword((array) Auth::user()),
             'stats'  => $stats,
             'orders' => Database::all(
                 'SELECT o.kode_order, o.status, o.total, o.created_at, u.nama

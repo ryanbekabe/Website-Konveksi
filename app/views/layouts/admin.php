@@ -19,6 +19,10 @@
             <?php if (Auth::hasRole(['admin'])): ?>
             <a class="<?= trim(is_active('/admin/produk')) ?>" href="<?= e(url('/admin/produk')) ?>">Produk</a>
             <?php endif; ?>
+            <?php if (Auth::hasRole(['admin'])): ?>
+            <a class="<?= trim(is_active('/admin/pengguna')) ?>" href="<?= e(url('/admin/pengguna')) ?>">Pengguna</a>
+            <?php endif; ?>
+            <a class="<?= trim(is_active('/akun')) ?>" href="<?= e(url('/akun')) ?>">Akun Saya</a>
             <a href="<?= e(url('/')) ?>">Lihat Situs</a>
         </nav>
         <form method="post" action="<?= e(url('/keluar')) ?>">

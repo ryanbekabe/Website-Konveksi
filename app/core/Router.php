@@ -54,6 +54,11 @@ class Router
 
     private function runMiddleware(string $mw): void
     {
+        // Pastikan akun masih aktif; bila dinonaktifkan, sesi diakhiri dan Auth::check() menjadi false.
+        if (Auth::check()) {
+            Auth::user();
+        }
+
         // Contoh: 'role:admin,keuangan'
         if (str_starts_with($mw, 'role:')) {
             if (!Auth::check()) {
