@@ -10,7 +10,7 @@
     <div class="stat"><span><?= e(rupiah($stats['omzet'])) ?></span>Omzet (selesai)</div>
     <div class="stat"><span><?= (int) $stats['produksi'] ?></span>Dalam produksi</div>
     <div class="stat <?= $stats['terlambat'] ? 'stat-warn' : '' ?>"><span><?= (int) $stats['terlambat'] ?></span>Pesanan terlambat</div>
-    <div class="stat"><span><?= (int) $stats['stok_menipis'] ?></span>Bahan menipis</div>
+    <a class="stat <?= $stats['stok_menipis'] ? 'stat-warn' : '' ?>" href="<?= e(url('/admin/bahan?menipis=1')) ?>"><span><?= (int) $stats['stok_menipis'] ?></span>Bahan menipis</a>
 </div>
 
 <h2>Pesanan Terbaru</h2>

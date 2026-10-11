@@ -71,3 +71,25 @@ $router->get('/admin/pengguna/tambah', 'AdminUserController@create', ['role:admi
 $router->post('/admin/pengguna/tambah', 'AdminUserController@store', ['role:admin']);
 $router->get('/admin/pengguna/{id}/ubah', 'AdminUserController@edit', ['role:admin']);
 $router->post('/admin/pengguna/{id}/ubah', 'AdminUserController@update', ['role:admin']);
+
+// Notifikasi
+$router->get('/notifikasi', 'NotificationController@index', ['auth']);
+$router->post('/notifikasi/baca', 'NotificationController@markRead', ['auth']);
+
+// Admin: bahan baku (rute statis /tambah harus sebelum /{id})
+$router->get('/admin/bahan', 'AdminMaterialController@index', ['admin']);
+$router->get('/admin/bahan/tambah', 'AdminMaterialController@create', ['role:admin']);
+$router->post('/admin/bahan/tambah', 'AdminMaterialController@store', ['role:admin']);
+$router->get('/admin/bahan/{id}', 'AdminMaterialController@show', ['admin']);
+$router->get('/admin/bahan/{id}/ubah', 'AdminMaterialController@edit', ['role:admin']);
+$router->post('/admin/bahan/{id}/ubah', 'AdminMaterialController@update', ['role:admin']);
+$router->post('/admin/bahan/{id}/hapus', 'AdminMaterialController@destroy', ['role:admin']);
+$router->post('/admin/bahan/{id}/mutasi', 'AdminMaterialController@move', ['role:admin,produksi']);
+
+// Admin: supplier
+$router->get('/admin/supplier', 'AdminSupplierController@index', ['role:admin']);
+$router->get('/admin/supplier/tambah', 'AdminSupplierController@create', ['role:admin']);
+$router->post('/admin/supplier/tambah', 'AdminSupplierController@store', ['role:admin']);
+$router->get('/admin/supplier/{id}/ubah', 'AdminSupplierController@edit', ['role:admin']);
+$router->post('/admin/supplier/{id}/ubah', 'AdminSupplierController@update', ['role:admin']);
+$router->post('/admin/supplier/{id}/hapus', 'AdminSupplierController@destroy', ['role:admin']);

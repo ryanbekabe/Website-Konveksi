@@ -29,6 +29,7 @@ class AdminOrderController extends Controller
             'shipment' => Order::shipment($id),
             'stages'   => ProductionStage::forOrder($id),
             'assignees' => ProductionStage::assignees(),
+            'usage'    => Material::usageForOrder($id),
             'paid'     => Order::paidTotal($id),
             'next'     => Order::allowedNext($order['status']),
         ], 'admin');

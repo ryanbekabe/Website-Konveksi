@@ -19,7 +19,14 @@ $admins = Database::all("SELECT id FROM users WHERE role = 'admin' AND status = 
 foreach ($low as $m) {
     $pesan = sprintf('Stok %s menipis: %s %s', $m['nama'], rtrim(rtrim((string) $m['stok'], '0'), '.'), $m['satuan']);
     foreach ($admins as $a) {
-        Database::insert('notifications', ['user_id' => $a['id'], 'pesan' => mb_substr($pesan, 0, 255)]);
+        // Lewati bila pengingat yang sama sudah ada dan belum dibaca (hindari menumpuk tiap hari).
+        $sudah = Database::value(
+            'SELECT COUNT(*) FROM notifications WHERE user_id = ? AND dibaca = 0 AND pesan LIKE ?',
+            [$a['id'], 'Stok ' . $m['nama'] . ' menipis%']
+        );
+        if (!$sudah) {
+            Database::insert('notifications', ['user_id' => $a['id'], 'pesan' => mb_substr($pesan, 0, 255)]);
+        }
     }
 }
 echo count($low) . " bahan menipis dicatat.\n";
