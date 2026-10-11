@@ -22,7 +22,8 @@
                 <?php endif; ?>
                 <form method="post" action="<?= e(url('/keluar')) ?>" class="inline">
                     <?= csrf_field() ?>
-                    <button type="submit" class="link">Keluar (<?= e(Auth::user()['nama'] ?? '') ?>)</button>
+                    <a href="<?= e(url('/akun')) ?>"><?= e(Auth::user()['nama'] ?? 'Akun') ?></a>
+                    <button type="submit" class="link">Keluar</button>
                 </form>
             <?php else: ?>
                 <a href="<?= e(url('/masuk')) ?>">Masuk</a>

@@ -59,3 +59,15 @@ $router->post('/admin/pesanan/{kode}/estimasi', 'AdminOrderController@setEstimat
 // Produksi
 $router->get('/admin/produksi', 'AdminProductionController@board', ['role:admin,produksi']);
 $router->post('/admin/produksi/{id}', 'AdminProductionController@update', ['role:admin,produksi']);
+
+// Akun saya
+$router->get('/akun', 'AccountController@form', ['auth']);
+$router->post('/akun', 'AccountController@updateProfile', ['auth']);
+$router->post('/akun/sandi', 'AccountController@updatePassword', ['auth']);
+
+// Admin: pengguna
+$router->get('/admin/pengguna', 'AdminUserController@index', ['role:admin']);
+$router->get('/admin/pengguna/tambah', 'AdminUserController@create', ['role:admin']);
+$router->post('/admin/pengguna/tambah', 'AdminUserController@store', ['role:admin']);
+$router->get('/admin/pengguna/{id}/ubah', 'AdminUserController@edit', ['role:admin']);
+$router->post('/admin/pengguna/{id}/ubah', 'AdminUserController@update', ['role:admin']);

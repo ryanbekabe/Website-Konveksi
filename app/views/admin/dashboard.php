@@ -1,3 +1,8 @@
+<?php if (!empty($defaultPassword)): ?>
+    <div class="alert alert-error">
+        Akun Anda masih memakai kata sandi bawaan. <a href="<?= e(url('/akun')) ?>"><strong>Ganti sekarang</strong></a> sebelum situs dipakai.
+    </div>
+<?php endif; ?>
 <div class="stats">
     <div class="stat"><span><?= (int) $stats['produk'] ?></span>Produk</div>
     <div class="stat"><span><?= (int) $stats['pelanggan'] ?></span>Pelanggan</div>

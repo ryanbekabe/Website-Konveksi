@@ -15,6 +15,7 @@ Kode awal (fondasi) sudah tersedia. Lihat [Rancangan Program](RANCANGAN_PROGRAM.
 | Invoice dan SPK siap cetak (Cetak / Simpan PDF dari peramban), estimasi selesai | |
 | Pesanan pelanggan: garis waktu status, bayar DP/pelunasan (upload bukti), setujui/revisi mockup, batalkan | Admin untuk kategori, varian, harga grosir, pelanggan, konten |
 | Admin: dashboard, CRUD produk, kelola pesanan (verifikasi bayar, mockup, ongkir, status, resi) | |
+| Pengguna: daftar/cari/filter, tambah staf, ubah peran/status, reset sandi; Akun Saya (profil, ganti sandi) | |
 | Produksi: papan produksi, tugas saya, penugasan petugas, mulai/selesai/reset per tahap, progres untuk pelanggan | |
 | Skema database lengkap, seed, skrip cron (backup, stok, pengingat) | |
 
@@ -31,7 +32,7 @@ PHP ≥ 8.0 (ekstensi `pdo_mysql`, `mbstring`, `fileinfo`, `gd`), MySQL 5.7+/Mar
    - **Alternatif**: unggah semuanya ke `public_html/`. `.htaccess` di root mengarahkan ke `public/`, dan `.htaccess` di folder `app/`, `config/`, `database/`, `storage/`, `cron/`, `vendor/` memblokir akses langsung.
 4. Pastikan `storage/` dan `public/uploads/` dapat ditulis (755/775). Atur `upload_max_filesize`/`post_max_size` PHP minimal 5 MB (cPanel > Select PHP Version > Options) agar upload desain dan bukti bayar tidak gagal.
 5. Ubah nama, alamat, telepon, dan rekening usaha di tabel `settings` (`nama_usaha`, `alamat_usaha`, `telepon_usaha`, `rekening_bank`); nilainya tampil di invoice dan SPK.
-6. Login admin bawaan: `admin@konveksi.local` / `admin123`. **Ganti segera setelah login pertama.**
+6. Login admin bawaan: `admin@konveksi.local` / `admin123`. **Ganti segera lewat menu Akun Saya**; dashboard menampilkan peringatan selama kata sandi bawaan masih dipakai.
 7. Aktifkan SSL, lalu buka komentar aturan HTTPS di `public/.htaccess`. Pastikan `debug` bernilai `false` di produksi.
 
 ### Cron Job (cPanel)
@@ -64,6 +65,12 @@ Produksi/Admin: dikirim (kurir + resi)   ->  selesai
 
 Hak akses: **admin** semua; **produksi** mockup & status; **keuangan** verifikasi pembayaran & ongkir. Produk hanya dikelola **admin**. Perpindahan status divalidasi di `Order::allowedNext()`. Berkas desain, mockup, dan bukti bayar disimpan di `storage/uploads` dan hanya dapat dibuka pemilik pesanan atau staf lewat `/berkas/...`.
 
+## Pengguna dan Akun
+
+- **Pengguna** (`/admin/pengguna`, khusus admin): cari/filter (peran, status), tambah akun (admin, produksi, keuangan, pelanggan), ubah data/peran/status, dan reset kata sandi. Akun tidak dihapus, hanya **dinonaktifkan** (riwayat pesanan tetap utuh); akun nonaktif tidak bisa login dan sesinya yang sedang berjalan berakhir pada permintaan berikutnya. Admin tidak dapat mengubah peran atau menonaktifkan akunnya sendiri.
+- **Akun Saya** (`/akun`, semua pengguna): ubah nama/HP dan ganti kata sandi (wajib memasukkan sandi lama).
+- Perubahan penting dicatat di `activity_logs`. Fitur "lupa kata sandi" mandiri belum ada karena butuh email SMTP; sementara admin dapat mereset sandi pengguna.
+
 ## Tahapan Produksi
 
 Saat mockup disetujui, enam tahap dibuat otomatis: pemotongan, penjahitan, sablon/bordir, finishing, quality control, packing.
@@ -72,7 +79,7 @@ Saat mockup disetujui, enam tahap dibuat otomatis: pemotongan, penjahitan, sablo
 - **Per tahap** (di papan atau halaman pesanan admin): pilih petugas, catatan, lalu **Mulai**, **Selesai**, atau **Reset**.
 - **Aturan**: tahap dimulai berurutan; tidak bisa selesai sebelum dimulai; staf produksi yang menekan Mulai tanpa memilih petugas otomatis menjadi petugas; Reset hanya jika tahap setelahnya belum dimulai. Perubahan hanya diizinkan saat pesanan berstatus produksi/qc.
 - **Otomatis**: memulai tahap QC mengubah status pesanan menjadi `qc`; menyelesaikan tahap terakhir mengubahnya menjadi `menunggu_pelunasan` dan memberi tahu pelanggan nominal pelunasan. Pelanggan menerima notifikasi tiap tahap selesai dan melihat progresnya di halaman pesanan.
-- Staf produksi dibuat sebagai pengguna dengan `role = 'produksi'` (sementara lewat phpMyAdmin; manajemen pengguna di panel admin belum ada).
+- Akun staf dibuat admin di menu **Pengguna** dengan peran Produksi.
 
 ## Invoice dan SPK
 
