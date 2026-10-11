@@ -31,7 +31,7 @@ class Router
         $method = strtoupper($method);
 
         if ($method === 'POST' && !Csrf::validate($_POST['_token'] ?? null)) {
-            abort(419, 'Sesi formulir kedaluwarsa. Muat ulang halaman lalu coba lagi.');
+            abort(403, 'Sesi formulir kedaluwarsa atau data terlalu besar. Muat ulang halaman lalu coba lagi.', 'Sesi Kedaluwarsa');
         }
 
         foreach ($this->routes as $route) {

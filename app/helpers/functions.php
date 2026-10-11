@@ -29,9 +29,12 @@ function url(string $path = '/'): string
     return base_path() . '/' . ltrim($path, '/');
 }
 
+/** URL aset statis; ditambah ?v=waktu-ubah agar peramban memuat ulang setelah pembaruan. */
 function asset(string $path): string
 {
-    return url('assets/' . ltrim($path, '/'));
+    $path = ltrim($path, '/');
+    $mtime = defined('PUBLIC_DIR') ? @filemtime(PUBLIC_DIR . '/assets/' . $path) : false;
+    return url('assets/' . $path) . ($mtime ? '?v=' . $mtime : '');
 }
 
 function upload_url(string $subdir, ?string $file): string
@@ -59,11 +62,12 @@ function redirect(string $path): never
     exit;
 }
 
-function abort(int $code, string $message = ''): never
+function abort(int $code, string $message = '', ?string $title = null): never
 {
+    // Hanya kode status standar HTTP: server seperti Apache mengubah kode tak dikenal (mis. 419) menjadi 500.
     http_response_code($code);
-    $titles = [403 => 'Akses Ditolak', 404 => 'Halaman Tidak Ditemukan', 419 => 'Sesi Kedaluwarsa', 500 => 'Terjadi Kesalahan'];
-    $title = $titles[$code] ?? 'Kesalahan';
+    $titles = [400 => 'Permintaan Tidak Valid', 403 => 'Akses Ditolak', 404 => 'Halaman Tidak Ditemukan', 500 => 'Terjadi Kesalahan'];
+    $title = $title ?? ($titles[$code] ?? 'Kesalahan');
     $message = $message !== '' ? $message : ($code === 404 ? 'Halaman yang Anda cari tidak ada.' : '');
 
     $file = BASE_DIR . '/app/views/errors/error.php';
@@ -72,6 +76,29 @@ function abort(int $code, string $message = ''): never
     $content = ob_get_clean();
     require BASE_DIR . '/app/views/layouts/main.php';
     exit;
+}
+
+/**
+ * Halaman galat umum yang berdiri sendiri (tanpa layout/database) untuk exception tak tertangani.
+ * Rincian hanya ditampilkan bila app.debug aktif; selain itu hanya dicatat di storage/logs/error.log.
+ */
+function render_fatal(?Throwable $e): void
+{
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+    if (!headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: text/html; charset=UTF-8');
+    }
+    $debug = !empty($GLOBALS['config']['app']['debug']);
+    $detail = ($debug && $e) ? "\n" . get_class($e) . ': ' . $e->getMessage() . "\n" . $e->getFile() . ':' . $e->getLine() . "\n" . $e->getTraceAsString() : '';
+    echo '<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
+        . '<title>Terjadi Kesalahan</title></head><body style="font-family:system-ui,sans-serif;max-width:560px;margin:15vh auto;padding:0 16px;text-align:center">'
+        . '<h1>Terjadi Kesalahan</h1><p>Maaf, ada gangguan pada server. Silakan coba lagi beberapa saat lagi atau hubungi kami.</p>'
+        . '<p><a href="' . htmlspecialchars(base_path() . '/', ENT_QUOTES) . '">Kembali ke beranda</a></p>'
+        . ($detail !== '' ? '<pre style="text-align:left;white-space:pre-wrap;background:#f3f4f6;padding:12px;font-size:12px">' . htmlspecialchars($detail, ENT_QUOTES) . '</pre>' : '')
+        . '</body></html>';
 }
 
 function csrf_field(): string

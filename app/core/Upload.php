@@ -10,7 +10,7 @@ class Upload
     public static function image(?array $file, string $subdir): ?string
     {
         $cfg = $GLOBALS['config']['upload'];
-        return self::save($file, BASE_DIR . '/public/uploads/' . $subdir, $cfg['image_mime'], $cfg['max_size'], true);
+        return self::save($file, PUBLIC_DIR . '/uploads/' . $subdir, $cfg['image_mime'], $cfg['max_size'], true);
     }
 
     /**
@@ -69,7 +69,7 @@ class Upload
     public static function remove(string $subdir, ?string $name): void
     {
         if ($name && preg_match('/^[a-f0-9]+\.(jpg|png|webp)$/', $name)) {
-            @unlink(BASE_DIR . "/public/uploads/$subdir/$name");
+            @unlink(PUBLIC_DIR . "/uploads/$subdir/$name");
         }
     }
 

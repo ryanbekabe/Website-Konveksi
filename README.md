@@ -4,28 +4,38 @@ Aplikasi web untuk bisnis konveksi (kaos, kemeja, jaket, seragam, hoodie, dll.),
 
 ## Status
 
-Kode awal (fondasi) sudah tersedia. Lihat [Rancangan Program](RANCANGAN_PROGRAM.md) untuk rencana lengkap.
+Semua modul inti pada [Rancangan Program](RANCANGAN_PROGRAM.md) sudah tersedia, kecuali email/WhatsApp otomatis. Panduan pemasangan: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
-| Sudah ada | Belum ada (rencana) |
-|-----------|---------------------|
-| Router, MVC native, PDO, session, CSRF, validator, upload aman (publik & privat) | Pengelolaan tahapan produksi (penugasan, mulai/selesai) |
-| Registrasi, login, logout, pembatasan percobaan login, role | Stok bahan baku, supplier, laporan |
-| Beranda, katalog (cari, filter, paginasi), detail produk, harga grosir bertingkat | Email/WhatsApp otomatis, ulasan |
-| Keranjang dan checkout, form pesanan custom (tabel ukuran, upload desain, min. order) | Kalkulator estimasi, ongkir via API |
-| Invoice dan SPK siap cetak (Cetak / Simpan PDF dari peramban), estimasi selesai | |
-| Pesanan pelanggan: garis waktu status, bayar DP/pelunasan (upload bukti), setujui/revisi mockup, batalkan | Admin untuk kategori, varian, harga grosir, pelanggan, konten |
-| Admin: dashboard, CRUD produk, kelola pesanan (verifikasi bayar, mockup, ongkir, status, resi) | |
-| Laporan penjualan, produksi, dan stok: rentang tanggal, ringkasan, tabel rincian, cetak, ekspor CSV | |
-| Bahan baku & supplier: stok masuk/pemakaian/koreksi (opname), riwayat, peringatan stok menipis, pemakaian per pesanan; halaman Notifikasi | |
-| Pengguna: daftar/cari/filter, tambah staf, ubah peran/status, reset sandi; Akun Saya (profil, ganti sandi) | |
-| Produksi: papan produksi, tugas saya, penugasan petugas, mulai/selesai/reset per tahap, progres untuk pelanggan | |
-| Skema database lengkap, seed, skrip cron (backup, stok, pengingat) | |
+**Sudah ada**
+
+- Inti: router, MVC native, PDO, session, CSRF, validator, unggah aman (publik dan privat), penanganan error global, zona waktu konsisten.
+- Akun: registrasi, login/logout, pembatasan percobaan login, peran (admin, produksi, keuangan, pelanggan), Akun Saya, manajemen pengguna.
+- Katalog: pencarian, filter, paginasi, detail produk, harga grosir bertingkat, keranjang.
+- Pesanan: checkout, form pesanan custom (tabel ukuran, upload desain, minimum order), garis waktu status, bayar DP/pelunasan dengan bukti, persetujuan/revisi mockup, pembatalan.
+- Admin: dashboard, CRUD produk, kelola pesanan (verifikasi bayar, mockup, ongkir, status, resi, estimasi), invoice dan SPK siap cetak.
+- Produksi: papan produksi, tugas saya, penugasan petugas, mulai/selesai/reset per tahap, progres untuk pelanggan.
+- Stok: bahan baku dan supplier, stok masuk/pemakaian/koreksi, riwayat, peringatan stok menipis, pemakaian per pesanan, halaman Notifikasi.
+- Laporan penjualan, produksi, dan stok dengan rentang tanggal, cetak, dan ekspor CSV.
+- Operasional: skema database lengkap, installer web sekali pakai, skrip cron (backup, stok, pengingat), `.htaccess` teruji di Apache untuk tiga penempatan, uji otomatis (sekitar 1.000 pemeriksaan).
+
+**Belum ada**
+
+- Email/WhatsApp otomatis dan fitur "lupa kata sandi" mandiri (butuh SMTP).
+- Kalkulator estimasi harga publik, ongkir lewat API kurir, payment gateway.
+- Admin untuk kategori, varian, harga grosir, dan konten (blog, portofolio, FAQ, testimoni), ulasan produk.
+- Pengurangan stok otomatis berdasarkan resep produk.
+- Verifikasi di LiteSpeed, PHP-FPM, dan MySQL 5.7/8 asli (lihat [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)).
 
 ## Persyaratan
 
-PHP ≥ 8.0 (ekstensi `pdo_mysql`, `mbstring`, `fileinfo`, `gd`), MySQL 5.7+/MariaDB 10.3+, Apache dengan `mod_rewrite`.
+PHP ≥ 8.1 (ekstensi `pdo_mysql`, `mbstring`, `fileinfo`, `gd` opsional), MySQL 5.7+/MariaDB 10.3+, Apache dengan `mod_rewrite`.
 
 ## Instalasi
+
+Panduan lengkap (penempatan berkas, SSL, cron, backup, pembaruan, uji pasca-deploy, pemecahan masalah): **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**. Ringkasnya:
+
+- **Cara cepat**: unggah berkas, buat database di cPanel, buka `https://domain-anda/install.php`, isi formulir. Installer membuat tabel, akun admin dengan kata sandi pilihan Anda, dan `config/config.php`, lalu menghapus dirinya sendiri.
+- **Cara manual** (langkah di bawah): impor `schema.sql`/`seed.sql` lewat phpMyAdmin dan salin konfigurasi sendiri.
 
 1. Buat database MySQL (utf8mb4), lalu impor `database/schema.sql` dan `database/seed.sql` (phpMyAdmin). Bila database dibuat dari versi lama, jalankan berurutan `database/migrations/001_checkout.sql` dan `002_dokumen.sql`.
 2. Salin `config/config.example.php` menjadi `config/config.php`, isi kredensial database, `base_path`, dan nomor WhatsApp.
@@ -51,6 +61,14 @@ PHP ≥ 8.0 (ekstensi `pdo_mysql`, `mbstring`, `fileinfo`, `gd`), MySQL 5.7+/Mar
 cp config/config.example.php config/config.php   # lalu sesuaikan
 php -S 127.0.0.1:8000 -t public public/index.php
 ```
+
+## Pengujian
+
+```bash
+bash tests/run.sh    # sintaks PHP + uji unit/integritas + uji end-to-end (butuh MySQL untuk e2e)
+php tests/unit.php   # tanpa database
+```
+Uji end-to-end membuat database sementara, menjalankan server PHP bawaan, dan menguji alur pesanan lengkap, matriks hak akses 5 peran, keamanan (IDOR, XSS, unggahan berbahaya, CSRF), stok serentak, laporan, dan manajemen pengguna. Rincian di [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#12-menjalankan-uji-otomatis-pengembang).
 
 ## Alur Pesanan
 
@@ -113,7 +131,7 @@ Saat mockup disetujui, enam tahap dibuat otomatis: pemotongan, penjahitan, sablo
 ## Struktur Folder
 
 ```
-public/           front controller (index.php), assets, uploads (satu-satunya yang diakses web)
+public/           front controller (index.php), install.php (hapus setelah dipakai), assets, uploads (satu-satunya yang diakses web)
 app/core/         Router, Database (PDO), Auth, Session, Csrf, Validator, Upload, Csv, Controller
 app/controllers/  controller publik; admin/ untuk panel admin
 app/models/       User, Product, Category, Cart, Order, ProductionStage, Material, Supplier, Report, Setting
@@ -123,6 +141,8 @@ app/routes.php    daftar rute
 config/           config.example.php (config.php tidak di-commit)
 database/         schema.sql, seed.sql
 cron/             skrip untuk Cron Job cPanel
+docs/             panduan deployment
+tests/            uji unit (unit.php), end-to-end (e2e.sh), pemicu (run.sh)
 storage/          cache, logs, backups, uploads privat (diproteksi .htaccess)
 ```
 

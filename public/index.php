@@ -9,6 +9,8 @@ if (PHP_SAPI === 'cli-server') {
     }
 }
 
+// Folder web (public/ atau public_html/) dan induk aplikasi (berisi app/, config/, storage/, ...).
+define('PUBLIC_DIR', __DIR__);
 define('BASE_DIR', dirname(__DIR__));
 
 require BASE_DIR . '/app/core/bootstrap.php';
