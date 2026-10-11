@@ -1,0 +1,10 @@
+# Dipakai bila seluruh proyek diunggah ke public_html/ (tanpa memindahkan folder public/).
+# Semua permintaan diarahkan ke folder public/.
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ public/ [L]
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
