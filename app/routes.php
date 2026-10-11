@@ -50,3 +50,8 @@ $router->post('/admin/pesanan/{kode}/status', 'AdminOrderController@updateStatus
 $router->post('/admin/pesanan/{kode}/mockup', 'AdminOrderController@uploadMockup', ['role:admin,produksi']);
 $router->post('/admin/pesanan/{kode}/ongkir', 'AdminOrderController@setShipping', ['role:admin,keuangan']);
 $router->post('/admin/pembayaran/{id}/verifikasi', 'AdminOrderController@verifyPayment', ['role:admin,keuangan']);
+
+// Dokumen cetak
+$router->get('/pesanan/{kode}/invoice', 'DocumentController@invoice', ['auth']);
+$router->get('/admin/pesanan/{kode}/spk', 'DocumentController@spk', ['admin']);
+$router->post('/admin/pesanan/{kode}/estimasi', 'AdminOrderController@setEstimate', ['role:admin,produksi']);

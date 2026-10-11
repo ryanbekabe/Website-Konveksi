@@ -3,7 +3,11 @@ $kode = $order['kode_order'];
 $canFinance = Auth::hasRole(['admin', 'keuangan']);
 $canProduction = Auth::hasRole(['admin', 'produksi']);
 ?>
-<p><a href="<?= e(url('/admin/pesanan')) ?>">&larr; Semua pesanan</a></p>
+<p>
+    <a href="<?= e(url('/admin/pesanan')) ?>">&larr; Semua pesanan</a> &middot;
+    <a class="btn btn-sm" href="<?= e(url("/pesanan/$kode/invoice")) ?>" target="_blank" rel="noopener">Invoice</a>
+    <a class="btn btn-sm" href="<?= e(url("/admin/pesanan/$kode/spk")) ?>" target="_blank" rel="noopener">SPK</a>
+</p>
 <p><?= status_badge($order['status']) ?>
    Pelanggan: <strong><?= e($order['pelanggan']) ?></strong> (<?= e($order['email']) ?>, <?= e($order['pelanggan_hp']) ?>)
    &middot; <?= e(date('d M Y H:i', strtotime($order['created_at']))) ?></p>
@@ -81,6 +85,12 @@ $canProduction = Auth::hasRole(['admin', 'produksi']);
 <?php endif; ?>
 
 <?php if ($canProduction): ?>
+<form method="post" action="<?= e(url("/admin/pesanan/$kode/estimasi")) ?>" class="inline-form">
+    <?= csrf_field() ?>
+    <label>Estimasi selesai <input type="date" name="estimasi_selesai" value="<?= e($order['estimasi_selesai'] ?? '') ?>"></label>
+    <button class="btn btn-sm" type="submit">Simpan estimasi</button>
+</form>
+
 <h2>Mockup</h2>
 <?php foreach ($mockups as $m): ?>
     <p><a href="<?= e(url('/berkas/desain/' . (int) $m['id'])) ?>" target="_blank" rel="noopener">Mockup #<?= (int) $m['id'] ?></a>

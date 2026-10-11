@@ -11,7 +11,8 @@ Kode awal (fondasi) sudah tersedia. Lihat [Rancangan Program](RANCANGAN_PROGRAM.
 | Router, MVC native, PDO, session, CSRF, validator, upload aman (publik & privat) | Pengelolaan tahapan produksi (penugasan, mulai/selesai) |
 | Registrasi, login, logout, pembatasan percobaan login, role | Stok bahan baku, supplier, laporan |
 | Beranda, katalog (cari, filter, paginasi), detail produk, harga grosir bertingkat | Email/WhatsApp otomatis, ulasan |
-| Keranjang dan checkout, form pesanan custom (tabel ukuran, upload desain, min. order) | Invoice/SPK PDF, kalkulator estimasi, ongkir via API |
+| Keranjang dan checkout, form pesanan custom (tabel ukuran, upload desain, min. order) | Kalkulator estimasi, ongkir via API |
+| Invoice dan SPK siap cetak (Cetak / Simpan PDF dari peramban), estimasi selesai | |
 | Pesanan pelanggan: garis waktu status, bayar DP/pelunasan (upload bukti), setujui/revisi mockup, batalkan | Admin untuk kategori, varian, harga grosir, pelanggan, konten |
 | Admin: dashboard, CRUD produk, kelola pesanan (verifikasi bayar, mockup, ongkir, status, resi) | |
 | Skema database lengkap, seed, skrip cron (backup, stok, pengingat) | |
@@ -22,14 +23,15 @@ PHP ≥ 8.0 (ekstensi `pdo_mysql`, `mbstring`, `fileinfo`, `gd`), MySQL 5.7+/Mar
 
 ## Instalasi
 
-1. Buat database MySQL (utf8mb4), lalu impor `database/schema.sql` dan `database/seed.sql` (phpMyAdmin). Bila database dibuat dari versi lama sebelum checkout, jalankan `database/migrations/001_checkout.sql`.
+1. Buat database MySQL (utf8mb4), lalu impor `database/schema.sql` dan `database/seed.sql` (phpMyAdmin). Bila database dibuat dari versi lama, jalankan berurutan `database/migrations/001_checkout.sql` dan `002_dokumen.sql`.
 2. Salin `config/config.example.php` menjadi `config/config.php`, isi kredensial database, `base_path`, dan nomor WhatsApp.
 3. Unggah proyek ke hosting:
    - **Ideal**: isi folder `public/` ke `public_html/`, folder lainnya satu tingkat di atas `public_html/`, lalu sesuaikan `define('BASE_DIR', ...)` di `index.php`.
    - **Alternatif**: unggah semuanya ke `public_html/`. `.htaccess` di root mengarahkan ke `public/`, dan `.htaccess` di folder `app/`, `config/`, `database/`, `storage/`, `cron/`, `vendor/` memblokir akses langsung.
 4. Pastikan `storage/` dan `public/uploads/` dapat ditulis (755/775). Atur `upload_max_filesize`/`post_max_size` PHP minimal 5 MB (cPanel > Select PHP Version > Options) agar upload desain dan bukti bayar tidak gagal.
-5. Login admin bawaan: `admin@konveksi.local` / `admin123`. **Ganti segera setelah login pertama.**
-6. Aktifkan SSL, lalu buka komentar aturan HTTPS di `public/.htaccess`. Pastikan `debug` bernilai `false` di produksi.
+5. Ubah nama, alamat, telepon, dan rekening usaha di tabel `settings` (`nama_usaha`, `alamat_usaha`, `telepon_usaha`, `rekening_bank`); nilainya tampil di invoice dan SPK.
+6. Login admin bawaan: `admin@konveksi.local` / `admin123`. **Ganti segera setelah login pertama.**
+7. Aktifkan SSL, lalu buka komentar aturan HTTPS di `public/.htaccess`. Pastikan `debug` bernilai `false` di produksi.
 
 ### Cron Job (cPanel)
 
@@ -59,6 +61,12 @@ Produksi/Admin: dikirim (kurir + resi)   ->  selesai
 ```
 
 Hak akses: **admin** semua; **produksi** mockup & status; **keuangan** verifikasi pembayaran & ongkir. Produk hanya dikelola **admin**. Perpindahan status divalidasi di `Order::allowedNext()`. Berkas desain, mockup, dan bukti bayar disimpan di `storage/uploads` dan hanya dapat dibuka pemilik pesanan atau staf lewat `/berkas/...`.
+
+## Invoice dan SPK
+
+- **Invoice** (`/pesanan/{kode}/invoice`): dapat dibuka pemilik pesanan dan staf. Memuat rincian item, ongkir, pembayaran terverifikasi, sisa tagihan, dan cap LUNAS / BELUM LUNAS / DIBATALKAN.
+- **SPK** (`/admin/pesanan/{kode}/spk`): khusus staf. Memuat matriks jumlah per ukuran dan warna, catatan pelanggan, gambar desain/mockup, estimasi selesai, serta checklist tahapan dengan kolom petugas, tanggal, dan paraf.
+- Keduanya berupa halaman HTML siap cetak (A4). Klik **Cetak / Simpan PDF** lalu pilih "Simpan sebagai PDF"; tanpa pustaka tambahan sehingga ringan di shared hosting.
 
 ## Struktur Folder
 

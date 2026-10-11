@@ -1,7 +1,10 @@
 <?php $sisa = (float) $order['total'] - $paid; ?>
 <div class="toolbar">
     <h1><?= e($order['kode_order']) ?> <?= status_badge($order['status']) ?></h1>
-    <a href="<?= e(url('/pesanan')) ?>">&larr; Semua pesanan</a>
+    <span>
+        <a href="<?= e(url('/pesanan/' . $order['kode_order'] . '/invoice')) ?>" target="_blank" rel="noopener">Lihat / cetak invoice</a> &middot;
+        <a href="<?= e(url('/pesanan')) ?>">&larr; Semua pesanan</a>
+    </span>
 </div>
 
 <?php $status = $order['status']; require BASE_DIR . '/app/views/orders/_timeline.php'; ?>
@@ -33,6 +36,9 @@
 
 <p><strong>Alamat kirim</strong><br><?= nl2br(e($order['alamat_kirim'])) ?></p>
 <?php if ($order['catatan']): ?><p><strong>Catatan</strong><br><?= nl2br(e($order['catatan'])) ?></p><?php endif; ?>
+<?php if ($order['estimasi_selesai']): ?>
+    <p><strong>Estimasi selesai</strong><br><?= e(date('d M Y', strtotime($order['estimasi_selesai']))) ?></p>
+<?php endif; ?>
 <?php if ($shipment && $shipment['resi']): ?>
     <p><strong>Pengiriman</strong><br><?= e($shipment['kurir']) ?> - resi <code><?= e($shipment['resi']) ?></code></p>
 <?php endif; ?>
