@@ -55,3 +55,7 @@ $router->post('/admin/pembayaran/{id}/verifikasi', 'AdminOrderController@verifyP
 $router->get('/pesanan/{kode}/invoice', 'DocumentController@invoice', ['auth']);
 $router->get('/admin/pesanan/{kode}/spk', 'DocumentController@spk', ['admin']);
 $router->post('/admin/pesanan/{kode}/estimasi', 'AdminOrderController@setEstimate', ['role:admin,produksi']);
+
+// Produksi
+$router->get('/admin/produksi', 'AdminProductionController@board', ['role:admin,produksi']);
+$router->post('/admin/produksi/{id}', 'AdminProductionController@update', ['role:admin,produksi']);

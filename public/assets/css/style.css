@@ -128,3 +128,15 @@ legend { font-weight: 600; padding: 0 6px; }
 .inline-form label { display: grid; gap: 4px; }
 .inline-form input, .inline-form select { width: auto; }
 code { background: #f3f4f6; padding: 1px 6px; border-radius: 4px; }
+
+/* Produksi */
+.progress { background: #e5e7eb; border-radius: 999px; height: 10px; overflow: hidden; margin: 6px 0; }
+.progress span { display: block; height: 100%; background: #16a34a; border-radius: 999px; }
+.stat-warn span { color: var(--danger); }
+.stage-list { list-style: none; padding: 0; margin: 8px 0 20px; display: grid; gap: 4px; }
+.stage-list li { padding: 6px 10px; border-radius: 6px; background: #f3f4f6; color: var(--muted); }
+.stage-list li.berjalan { background: #dbeafe; color: #1e40af; font-weight: 600; }
+.stage-list li.selesai { background: #d1fae5; color: #065f46; }
+.stage-form { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.stage-form select, .stage-form input[type=text] { width: auto; min-width: 140px; flex: 1 1 140px; }
+.stage-actions { display: inline-flex; gap: 6px; }

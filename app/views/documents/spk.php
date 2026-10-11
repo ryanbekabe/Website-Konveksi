@@ -74,7 +74,7 @@
         <?php foreach ($stages as $s): ?>
             <tr style="height:30px">
                 <td class="c"><span class="check"></span></td>
-                <td><?= e(['qc' => 'Quality Control', 'sablon_bordir' => 'Sablon / Bordir'][$s['tahap']] ?? ucfirst($s['tahap'])) ?></td>
+                <td><?= e(Order::stageLabel($s['tahap'])) ?></td>
                 <td></td><td></td><td></td><td></td>
             </tr>
         <?php endforeach; ?>

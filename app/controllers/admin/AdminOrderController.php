@@ -27,7 +27,8 @@ class AdminOrderController extends Controller
             'mockups'  => Order::designs($id, 'mockup'),
             'payments' => Order::payments($id),
             'shipment' => Order::shipment($id),
-            'stages'   => Database::all('SELECT * FROM production_stages WHERE order_id = ? ORDER BY id', [$id]),
+            'stages'   => ProductionStage::forOrder($id),
+            'assignees' => ProductionStage::assignees(),
             'paid'     => Order::paidTotal($id),
             'next'     => Order::allowedNext($order['status']),
         ], 'admin');

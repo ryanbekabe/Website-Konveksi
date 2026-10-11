@@ -3,6 +3,8 @@
     <div class="stat"><span><?= (int) $stats['pelanggan'] ?></span>Pelanggan</div>
     <div class="stat"><span><?= (int) $stats['pesanan'] ?></span>Pesanan</div>
     <div class="stat"><span><?= e(rupiah($stats['omzet'])) ?></span>Omzet (selesai)</div>
+    <div class="stat"><span><?= (int) $stats['produksi'] ?></span>Dalam produksi</div>
+    <div class="stat <?= $stats['terlambat'] ? 'stat-warn' : '' ?>"><span><?= (int) $stats['terlambat'] ?></span>Pesanan terlambat</div>
     <div class="stat"><span><?= (int) $stats['stok_menipis'] ?></span>Bahan menipis</div>
 </div>
 

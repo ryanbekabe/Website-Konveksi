@@ -118,10 +118,4 @@ $canProduction = Auth::hasRole(['admin', 'produksi']);
 <?php endif; ?>
 <?php endif; ?>
 
-<?php if ($stages): ?>
-<h2>Tahapan Produksi</h2>
-<ul>
-    <?php foreach ($stages as $st): ?><li><?= e(str_replace('_', ' / ', $st['tahap'])) ?>: <?= e($st['status']) ?></li><?php endforeach; ?>
-</ul>
-<p class="muted">Pengelolaan tahapan produksi (penugasan, mulai/selesai) akan ditambahkan pada tahap berikutnya.</p>
-<?php endif; ?>
+<?php if ($stages): $back = 'pesanan'; require BASE_DIR . '/app/views/admin/orders/_stages.php'; endif; ?>

@@ -40,6 +40,20 @@ class Order
 
     public const STAGES = ['pemotongan', 'penjahitan', 'sablon_bordir', 'finishing', 'qc', 'packing'];
 
+    public const STAGE_LABELS = [
+        'pemotongan'    => 'Pemotongan',
+        'penjahitan'    => 'Penjahitan',
+        'sablon_bordir' => 'Sablon / Bordir',
+        'finishing'     => 'Finishing',
+        'qc'            => 'Quality Control',
+        'packing'       => 'Packing',
+    ];
+
+    public static function stageLabel(string $tahap): string
+    {
+        return self::STAGE_LABELS[$tahap] ?? ucfirst($tahap);
+    }
+
     public static function label(string $status): string
     {
         return self::STATUS[$status] ?? $status;

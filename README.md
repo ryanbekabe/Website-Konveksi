@@ -15,6 +15,7 @@ Kode awal (fondasi) sudah tersedia. Lihat [Rancangan Program](RANCANGAN_PROGRAM.
 | Invoice dan SPK siap cetak (Cetak / Simpan PDF dari peramban), estimasi selesai | |
 | Pesanan pelanggan: garis waktu status, bayar DP/pelunasan (upload bukti), setujui/revisi mockup, batalkan | Admin untuk kategori, varian, harga grosir, pelanggan, konten |
 | Admin: dashboard, CRUD produk, kelola pesanan (verifikasi bayar, mockup, ongkir, status, resi) | |
+| Produksi: papan produksi, tugas saya, penugasan petugas, mulai/selesai/reset per tahap, progres untuk pelanggan | |
 | Skema database lengkap, seed, skrip cron (backup, stok, pengingat) | |
 
 ## Persyaratan
@@ -55,12 +56,23 @@ Pelanggan: checkout / form pesan custom  ->  menunggu_pembayaran
 Pelanggan: unggah bukti DP               ->  Keuangan/Admin verifikasi  ->  dp_dibayar
 Produksi/Admin: unggah mockup            ->  menunggu_persetujuan
 Pelanggan: setujui  -> produksi (6 tahapan dibuat)   |   revisi -> kembali ke desain_mockup
-Produksi/Admin: qc -> menunggu_pelunasan (Keuangan/Admin dapat mengisi ongkir)
+Produksi/Admin: kelola 6 tahapan (lihat bawah); tahap QC dimulai -> qc; semua tahap selesai -> menunggu_pelunasan
+                 (Keuangan/Admin dapat mengisi ongkir)
 Pelanggan: unggah bukti pelunasan        ->  verifikasi  ->  siap_kirim
 Produksi/Admin: dikirim (kurir + resi)   ->  selesai
 ```
 
 Hak akses: **admin** semua; **produksi** mockup & status; **keuangan** verifikasi pembayaran & ongkir. Produk hanya dikelola **admin**. Perpindahan status divalidasi di `Order::allowedNext()`. Berkas desain, mockup, dan bukti bayar disimpan di `storage/uploads` dan hanya dapat dibuka pemilik pesanan atau staf lewat `/berkas/...`.
+
+## Tahapan Produksi
+
+Saat mockup disetujui, enam tahap dibuat otomatis: pemotongan, penjahitan, sablon/bordir, finishing, quality control, packing.
+
+- **Papan produksi** (`/admin/produksi`, admin dan produksi): *Tugas Saya* (tahap yang ditugaskan ke pengguna) dan daftar pesanan dalam produksi dengan progres, tahap aktif, petugas, estimasi, dan penanda **Terlambat**.
+- **Per tahap** (di papan atau halaman pesanan admin): pilih petugas, catatan, lalu **Mulai**, **Selesai**, atau **Reset**.
+- **Aturan**: tahap dimulai berurutan; tidak bisa selesai sebelum dimulai; staf produksi yang menekan Mulai tanpa memilih petugas otomatis menjadi petugas; Reset hanya jika tahap setelahnya belum dimulai. Perubahan hanya diizinkan saat pesanan berstatus produksi/qc.
+- **Otomatis**: memulai tahap QC mengubah status pesanan menjadi `qc`; menyelesaikan tahap terakhir mengubahnya menjadi `menunggu_pelunasan` dan memberi tahu pelanggan nominal pelunasan. Pelanggan menerima notifikasi tiap tahap selesai dan melihat progresnya di halaman pesanan.
+- Staf produksi dibuat sebagai pengguna dengan `role = 'produksi'` (sementara lewat phpMyAdmin; manajemen pengguna di panel admin belum ada).
 
 ## Invoice dan SPK
 
@@ -74,7 +86,7 @@ Hak akses: **admin** semua; **produksi** mockup & status; **keuangan** verifikas
 public/           front controller (index.php), assets, uploads (satu-satunya yang diakses web)
 app/core/         Router, Database (PDO), Auth, Session, Csrf, Validator, Upload, Controller
 app/controllers/  controller publik; admin/ untuk panel admin
-app/models/       User, Product, Category, Cart, Order, Setting
+app/models/       User, Product, Category, Cart, Order, ProductionStage, Setting
 app/views/        layouts/, home/, products/, auth/, cart/, admin/
 app/helpers/      fungsi bantu global (e(), url(), rupiah(), ...)
 app/routes.php    daftar rute
