@@ -144,6 +144,22 @@ class AdminOrderController extends Controller
         redirect("/admin/pesanan/$kode");
     }
 
+    /** Tanggal estimasi selesai (tampil di SPK dan halaman pesanan). */
+    public function setEstimate(string $kode): void
+    {
+        $order = $this->find($kode);
+        $date = trim((string) $this->input('estimasi_selesai', ''));
+        $d = DateTime::createFromFormat('Y-m-d', $date);
+        if ($date !== '' && (!$d || $d->format('Y-m-d') !== $date)) {
+            flash('error', 'Format tanggal tidak valid.');
+            redirect("/admin/pesanan/$kode");
+        }
+        Database::update('orders', ['estimasi_selesai' => $date === '' ? null : $date], 'id = ?', [$order['id']]);
+        log_activity('set_estimasi', $kode, $date);
+        flash('success', 'Estimasi selesai diperbarui.');
+        redirect("/admin/pesanan/$kode");
+    }
+
     private function find(string $kode): array
     {
         return Order::findByCode($kode) ?? abort(404);

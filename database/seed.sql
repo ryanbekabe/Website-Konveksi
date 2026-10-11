@@ -32,4 +32,6 @@ INSERT INTO product_variants (product_id, ukuran, warna, sku, stok) VALUES
 INSERT INTO settings (`key`, `value`) VALUES
 ('nama_usaha', 'Konveksi Maju Jaya'),
 ('rekening_bank', 'BCA 1234567890 a.n. Konveksi Maju Jaya'),
-('dp_persen', '50');
+('dp_persen', '50'),
+('alamat_usaha', 'Jl. Contoh No. 1, Bandung, Jawa Barat'),
+('telepon_usaha', '081234567890');
