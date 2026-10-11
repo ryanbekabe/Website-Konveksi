@@ -119,3 +119,22 @@ $canProduction = Auth::hasRole(['admin', 'produksi']);
 <?php endif; ?>
 
 <?php if ($stages): $back = 'pesanan'; require BASE_DIR . '/app/views/admin/orders/_stages.php'; endif; ?>
+
+<?php if (!empty($usage)): ?>
+<h2>Pemakaian Bahan</h2>
+<div class="table-wrap">
+<table class="table">
+    <thead><tr><th>Tanggal</th><th>Bahan</th><th>Jumlah</th><th>Keterangan</th></tr></thead>
+    <tbody>
+    <?php foreach ($usage as $u): ?>
+        <tr>
+            <td><?= e(date('d M Y', strtotime($u['tanggal']))) ?></td>
+            <td><a href="<?= e(url('/admin/bahan/' . (int) $u['material_id'])) ?>"><?= e($u['nama']) ?></a></td>
+            <td><?= $u['tipe'] === 'keluar' ? '-' : '+' ?><?= e(Material::fmt((float) $u['qty'])) ?> <?= e($u['satuan']) ?></td>
+            <td><?= e($u['keterangan']) ?></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+</div>
+<?php endif; ?>

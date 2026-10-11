@@ -15,6 +15,7 @@ Kode awal (fondasi) sudah tersedia. Lihat [Rancangan Program](RANCANGAN_PROGRAM.
 | Invoice dan SPK siap cetak (Cetak / Simpan PDF dari peramban), estimasi selesai | |
 | Pesanan pelanggan: garis waktu status, bayar DP/pelunasan (upload bukti), setujui/revisi mockup, batalkan | Admin untuk kategori, varian, harga grosir, pelanggan, konten |
 | Admin: dashboard, CRUD produk, kelola pesanan (verifikasi bayar, mockup, ongkir, status, resi) | |
+| Bahan baku & supplier: stok masuk/pemakaian/koreksi (opname), riwayat, peringatan stok menipis, pemakaian per pesanan; halaman Notifikasi | |
 | Pengguna: daftar/cari/filter, tambah staf, ubah peran/status, reset sandi; Akun Saya (profil, ganti sandi) | |
 | Produksi: papan produksi, tugas saya, penugasan petugas, mulai/selesai/reset per tahap, progres untuk pelanggan | |
 | Skema database lengkap, seed, skrip cron (backup, stok, pengingat) | |
@@ -65,6 +66,14 @@ Produksi/Admin: dikirim (kurir + resi)   ->  selesai
 
 Hak akses: **admin** semua; **produksi** mockup & status; **keuangan** verifikasi pembayaran & ongkir. Produk hanya dikelola **admin**. Perpindahan status divalidasi di `Order::allowedNext()`. Berkas desain, mockup, dan bukti bayar disimpan di `storage/uploads` dan hanya dapat dibuka pemilik pesanan atau staf lewat `/berkas/...`.
 
+## Stok Bahan Baku dan Supplier
+
+- **Bahan** (`/admin/bahan`): daftar dengan cari, filter supplier, dan **Hanya yang menipis** (stok sama atau di bawah minimum). Dilihat admin, produksi, dan keuangan. Data bahan (tambah/ubah/hapus) dan supplier hanya admin.
+- **Stok hanya berubah lewat mutasi** sehingga selalu cocok dengan riwayat: **Stok Masuk**, **Pemakaian** (boleh dikaitkan ke kode pesanan; tampil di halaman pesanan admin), dan **Koreksi Stok** (hasil hitung fisik; selisih dicatat sebagai penyesuaian). Admin dan produksi boleh mencatat mutasi. Stok tidak boleh negatif dan mutasi diproses atomik (aman bila dua staf mencatat bersamaan).
+- **Peringatan stok menipis**: admin mendapat notifikasi saat stok menembus batas minimum (sekali, bukan tiap mutasi), dan cron `cek_stok_minimum.php` mengingatkan harian selama masih menipis dan belum dibaca. Dashboard menampilkan jumlah bahan menipis (klik untuk melihat).
+- Bahan yang sudah punya riwayat tidak dapat dihapus. Menghapus supplier membuat bahan terkait menjadi "tanpa supplier".
+- **Notifikasi** (`/notifikasi`, semua pengguna): daftar pemberitahuan dengan jumlah belum dibaca di menu, dan "Tandai semua dibaca".
+
 ## Pengguna dan Akun
 
 - **Pengguna** (`/admin/pengguna`, khusus admin): cari/filter (peran, status), tambah akun (admin, produksi, keuangan, pelanggan), ubah data/peran/status, dan reset kata sandi. Akun tidak dihapus, hanya **dinonaktifkan** (riwayat pesanan tetap utuh); akun nonaktif tidak bisa login dan sesinya yang sedang berjalan berakhir pada permintaan berikutnya. Admin tidak dapat mengubah peran atau menonaktifkan akunnya sendiri.
@@ -93,7 +102,7 @@ Saat mockup disetujui, enam tahap dibuat otomatis: pemotongan, penjahitan, sablo
 public/           front controller (index.php), assets, uploads (satu-satunya yang diakses web)
 app/core/         Router, Database (PDO), Auth, Session, Csrf, Validator, Upload, Controller
 app/controllers/  controller publik; admin/ untuk panel admin
-app/models/       User, Product, Category, Cart, Order, ProductionStage, Setting
+app/models/       User, Product, Category, Cart, Order, ProductionStage, Material, Supplier, Setting
 app/views/        layouts/, home/, products/, auth/, cart/, admin/
 app/helpers/      fungsi bantu global (e(), url(), rupiah(), ...)
 app/routes.php    daftar rute

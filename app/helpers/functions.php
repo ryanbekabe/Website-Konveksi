@@ -176,3 +176,13 @@ function status_badge_stage(string $status): string
     $class = ['selesai' => 'badge-ok', 'berjalan' => 'badge-info', 'menunggu' => 'badge-warn'][$status] ?? 'badge-info';
     return '<span class="badge ' . $class . '">' . e(ProductionStage::STATUS[$status] ?? $status) . '</span>';
 }
+
+/** Jumlah notifikasi belum dibaca milik pengguna yang login (di-cache per permintaan). */
+function unread_notifications(): int
+{
+    static $count = null;
+    if ($count === null) {
+        $count = Auth::check() ? (int) Database::value('SELECT COUNT(*) FROM notifications WHERE user_id = ? AND dibaca = 0', [Auth::id()]) : 0;
+    }
+    return $count;
+}

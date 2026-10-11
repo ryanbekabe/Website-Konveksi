@@ -17,6 +17,7 @@
             <a href="<?= e(url('/keranjang')) ?>">Keranjang (<?= (int) Cart::count() ?>)</a>
             <?php if (Auth::check()): ?>
                 <a href="<?= e(url('/pesanan')) ?>">Pesanan Saya</a>
+                <a href="<?= e(url('/notifikasi')) ?>">Notifikasi<?= unread_notifications() ? ' <span class="badge badge-danger">' . unread_notifications() . '</span>' : '' ?></a>
                 <?php if (Auth::hasRole(['admin', 'produksi', 'keuangan'])): ?>
                     <a href="<?= e(url('/admin')) ?>">Admin</a>
                 <?php endif; ?>

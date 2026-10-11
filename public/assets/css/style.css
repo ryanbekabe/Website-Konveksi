@@ -40,7 +40,7 @@ form.inline { display: inline; }
 .form.wide { max-width: 640px; }
 .form label { display: grid; gap: 4px; font-weight: 500; }
 .form label.check { display: flex; align-items: center; gap: 8px; font-weight: 400; }
-input[type=text], input[type=email], input[type=password], input[type=tel], input[type=number], input[type=search], select, textarea {
+input[type=text], input[type=email], input[type=password], input[type=tel], input[type=number], input[type=search], input[type=date], select, textarea {
     width: 100%; padding: 9px 10px; border: 1px solid #d1d5db; border-radius: 6px; font: inherit; background: #fff;
 }
 input.qty { width: 80px; }
@@ -140,3 +140,12 @@ code { background: #f3f4f6; padding: 1px 6px; border-radius: 4px; }
 .stage-form { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .stage-form select, .stage-form input[type=text] { width: auto; min-width: 140px; flex: 1 1 140px; }
 .stage-actions { display: inline-flex; gap: 6px; }
+
+/* Stok & notifikasi */
+a.stat { display: block; text-decoration: none; }
+.cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.notif-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.notif-list li { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.notif-list li.unread { border-left: 4px solid var(--primary); background: #eff6ff; font-weight: 600; }
+.filters label.check { display: flex; align-items: center; gap: 6px; font-weight: 400; }
+@media (max-width: 760px) { .cols-2 { grid-template-columns: 1fr; } }
