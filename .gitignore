@@ -1,0 +1,12 @@
+config/config.php
+storage/uploads/*
+storage/cache/*
+storage/logs/*
+storage/backups/*
+public/uploads/products/*
+!.gitkeep
+!.htaccess
+vendor/*
+!vendor/.gitkeep
+!vendor/.htaccess
+.DS_Store
